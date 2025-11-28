@@ -22,16 +22,21 @@ export default function Chat() {
             const me = await getMe();
             setUsername(me.userName || me.email);
 
-            const history = await getHistory(me.id);
+            let history = [];
+            try {
+                history = await getHistory(me.id);
+            } catch (err) {
+                // Если истории нет — просто оставляем пустой массив
+                history = [];
+            }
 
-            // переводим анализы в сообщения
-            const historyMessages = history.map(h => ({
-                from: "ai",
-                text: h.summary
-            }));
+            // Переводим анализы в сообщения
+            const historyMessages = Array.isArray(history)
+                ? history.map(h => ({ from: "ai", text: h.summary }))
+                : [];
 
             setMessages([
-                { from: "ai", text: "Hi! Here's your test history:" },
+                { from: "ai", text: "Hi! Your history is empty yet. Try sending your first contract! 😊" },
                 ...historyMessages
             ]);
         } catch (err) {
@@ -39,6 +44,7 @@ export default function Chat() {
             navigate("/");
         }
     }
+
 
     // автоскролл
     useEffect(() => {

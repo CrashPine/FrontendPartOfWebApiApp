@@ -63,7 +63,7 @@ export default function Register() {
                 <button className="auth-btn">Create</button>
 
                 <p className="link">
-                    Already have an account? <a href="/login">Log In</a>
+                    Already have an account? <a href="/">Log In</a>
                 </p>
             </form>
         </div>
