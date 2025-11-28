@@ -1,14 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { login } from "../api";
 import "./../styles/auth.css";
 
 export default function Login() {
     const navigate = useNavigate();
 
-    const handleLogin = (e) => {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+
+    const handleLogin = async (e) => {
         e.preventDefault();
-        // Тут логика авторизации. Для демо — сразу в чат
-        navigate("/chat");
+        setError("");
+
+        try {
+            const res = await login({email, password});
+
+            // Сохраняем токены
+            localStorage.setItem("accessToken", res.accessToken);
+            localStorage.setItem("refreshToken", res.refreshToken);
+
+            navigate("/chat");
+        } catch (err) {
+            setError("Неверный email или пароль");
+        }
     };
 
     return (
@@ -16,10 +32,27 @@ export default function Login() {
             <form className="auth-card" onSubmit={handleLogin}>
                 <h2>Вход</h2>
 
-                <input type="email" placeholder="Email" required />
-                <input type="password" placeholder="Пароль" required />
+                {error && <p className="error">{error}</p>}
 
-                <button className="auth-btn" type="submit">Войти</button>
+                <input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                />
+
+                <input
+                    type="password"
+                    placeholder="Пароль"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                />
+
+                <button className="auth-btn" type="submit">
+                    Войти
+                </button>
 
                 <p className="link">
                     Нет аккаунта? <a href="/register">Регистрация</a>

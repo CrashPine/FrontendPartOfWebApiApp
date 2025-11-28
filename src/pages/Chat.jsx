@@ -1,49 +1,83 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import MessageBubble from "../components/MessageBubble";
 import TypingDots from "../components/TypingDots";
-import { analyzeContract } from "../api";
-import "../styles/chat.css";
-import "../styles/variables.css";
+import { analyzeContract, getMe, getHistory, logout } from "../api";
 
 export default function Chat() {
-    const [messages, setMessages] = useState([
-        { from: "ai", text: "Привет! Я анализирую твой смарт‑контракт…" },
-    ]);
+    const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [isTyping, setIsTyping] = useState(false);
+    const [username, setUsername] = useState("User");
     const listRef = useRef(null);
     const navigate = useNavigate();
 
+    // --- загрузка истории ---
     useEffect(() => {
-        if (listRef.current) {
-            listRef.current.scrollTop = listRef.current.scrollHeight;
+        initChat();
+    }, []);
+
+    async function initChat() {
+        try {
+            const me = await getMe();
+            setUsername(me.userName || me.email || "User");
+
+            const history = await getHistory(me.id);
+
+            // переводим анализы в сообщения
+            const historyMessages = history.map(h => ({
+                from: "ai",
+                text: h.summary
+            }));
+
+            setMessages([
+                { from: "ai", text: "Привет! Вот твоя история анализов:" },
+                ...historyMessages
+            ]);
+        } catch (err) {
+            console.log(err);
+            navigate("/");
         }
+    }
+
+    // автоскролл
+    useEffect(() => {
+        if (listRef.current)
+            listRef.current.scrollTop = listRef.current.scrollHeight;
     }, [messages, isTyping]);
 
+    // отправка нового анализа
     const handleSend = async () => {
         if (!input.trim()) return;
 
-        const userMsg = { from: "user", text: input.trim() };
-        setMessages((m) => [...m, userMsg]);
+        const text = input.trim();
         setInput("");
+
+        const userMsg = { from: "user", text };
+        setMessages(m => [...m, userMsg]);
+
         setIsTyping(true);
 
         try {
-            const res = await analyzeContract(userMsg.text);
-            setMessages((m) => [...m, { from: "ai", text: res.text }]);
-        } catch (err) {
-            setMessages((m) => [...m, { from: "ai", text: "Ошибка при анализе." }]);
+            const res = await analyzeContract(text);
+
+            setMessages(m => [
+                ...m,
+                { from: "ai", text: res.summary || res.analysisText }
+            ]);
+        } catch {
+            setMessages(m => [...m, { from: "ai", text: "Ошибка при анализе" }]);
         } finally {
             setIsTyping(false);
         }
     };
 
     const handleLogout = () => {
-        navigate("/login");
+        logout();
+        navigate("/");
     };
 
-    const onKeyDown = (e) => {
+    const onKeyDown = e => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
             handleSend();
@@ -54,10 +88,8 @@ export default function Chat() {
         <div className="chat-root">
             <div className="app">
                 <header className="topbar">
-                    <div className="username">Mirror Wndr</div>
-                    <button className="logout" onClick={handleLogout}>
-                        Logout
-                    </button>
+                    <div className="username">{username}</div>
+                    <button className="logout" onClick={handleLogout}>Logout</button>
                 </header>
 
                 <main className="messages" ref={listRef}>
@@ -75,17 +107,15 @@ export default function Chat() {
                 </main>
 
                 <footer className="inputBar">
-          <textarea
-              className="chat-input"
-              placeholder="Введите смарт‑контракт / вопрос..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={onKeyDown}
-              rows={1}
-          />
-                    <button className="send" onClick={handleSend}>
-                        Send
-                    </button>
+                    <textarea
+                        className="chat-input"
+                        placeholder="Введите смарт‑контракт или вопрос..."
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyDown={onKeyDown}
+                        rows={1}
+                    />
+                    <button className="send" onClick={handleSend}>Send</button>
                 </footer>
             </div>
         </div>

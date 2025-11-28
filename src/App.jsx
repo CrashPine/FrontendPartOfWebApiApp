@@ -8,6 +8,7 @@ import "./styles/variables.css";
 import "./styles/auth.css";
 import "./styles/chat.css";
 import "./styles/neon.css";
+import "./styles/global.css";
 
 
 export default function App() {
