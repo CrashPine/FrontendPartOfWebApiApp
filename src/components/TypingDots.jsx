@@ -1,11 +1,12 @@
-import "../styles/chat.css";
+import React from "react";
+import "../styles/neon.css";
 
 export default function TypingDots() {
     return (
         <div className="typing">
-            <span className="dot" />
-            <span className="dot" />
-            <span className="dot" />
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
     );
 }

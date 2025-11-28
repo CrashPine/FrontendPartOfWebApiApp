@@ -12,7 +12,9 @@ export default function Chat() {
     const listRef = useRef(null);
     const navigate = useNavigate();
 
-    // --- загрузка истории ---
+    // ============================
+    // ЗАГРУЗКА ИСТОРИИ
+    // ============================
     useEffect(() => {
         initChat();
     }, []);
@@ -23,21 +25,26 @@ export default function Chat() {
             setUsername(me.userName || me.email);
 
             let history = [];
+
             try {
-                history = await getHistory(me.id);
-            } catch (err) {
-                // Если истории нет — просто оставляем пустой массив
-                history = [];
+                history = await getHistory(me.id); // может дать 404 → поймаем
+            } catch {
+                history = []; // новый юзер — ок
             }
 
-            // Переводим анализы в сообщения
             const historyMessages = Array.isArray(history)
                 ? history.map(h => ({ from: "ai", text: h.summary }))
                 : [];
 
             setMessages([
-                { from: "ai", text: "Hi! Your history is empty yet. Try sending your first contract! 😊" },
-                ...historyMessages
+                {
+                    from: "ai",
+                    text:
+                        historyMessages.length > 0
+                            ? "Hi! I found your smart contract analysis history 📘"
+                            : "Hi! Your history is empty yet. Try sending your first contract! 😊",
+                },
+                ...historyMessages,
             ]);
         } catch (err) {
             console.log(err);
@@ -45,34 +52,42 @@ export default function Chat() {
         }
     }
 
-
     // автоскролл
     useEffect(() => {
         if (listRef.current)
             listRef.current.scrollTop = listRef.current.scrollHeight;
     }, [messages, isTyping]);
 
-    // отправка нового анализа
+    // ============================
+    // ОТПРАВКА НОВОГО ЗАПРОСА
+    // ============================
     const handleSend = async () => {
         if (!input.trim()) return;
 
-        const text = input.trim();
+        const userText = input.trim();
         setInput("");
 
-        const userMsg = { from: "user", text };
+        // сообщение юзера — сразу добавляем
+        const userMsg = { from: "user", text: userText };
         setMessages(m => [...m, userMsg]);
 
+        // включаем точки
         setIsTyping(true);
 
         try {
-            const res = await analyzeContract(text);
+            const res = await analyzeContract(userText);
 
+            const aiMsg = {
+                from: "ai",
+                text: res.summary || res.analysisText || "No summary provided",
+            };
+
+            setMessages(m => [...m, aiMsg]);
+        } catch {
             setMessages(m => [
                 ...m,
-                { from: "ai", text: res.summary || res.analysisText }
+                { from: "ai", text: "Error during analysis" },
             ]);
-        } catch {
-            setMessages(m => [...m, { from: "ai", text: "Error during analysis" }]);
         } finally {
             setIsTyping(false);
         }
@@ -113,14 +128,14 @@ export default function Chat() {
                 </main>
 
                 <footer className="inputBar">
-                    <textarea
-                        className="chat-input"
-                        placeholder="Enter a smart contract or question..."
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={onKeyDown}
-                        rows={1}
-                    />
+          <textarea
+              className="chat-input"
+              placeholder="Enter a smart contract or question..."
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={onKeyDown}
+              rows={1}
+          />
                     <button className="send" onClick={handleSend}>Send</button>
                 </footer>
             </div>
