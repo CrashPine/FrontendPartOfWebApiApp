@@ -8,7 +8,7 @@ export default function Chat() {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [isTyping, setIsTyping] = useState(false);
-    const [username, setUsername] = useState("User");
+    const [userName, setUsername] = useState("User");
     const listRef = useRef(null);
     const navigate = useNavigate();
 
@@ -20,7 +20,7 @@ export default function Chat() {
     async function initChat() {
         try {
             const me = await getMe();
-            setUsername(me.userName || me.email || "User");
+            setUsername(me.userName || me.email);
 
             const history = await getHistory(me.id);
 
@@ -31,7 +31,7 @@ export default function Chat() {
             }));
 
             setMessages([
-                { from: "ai", text: "Привет! Вот твоя история анализов:" },
+                { from: "ai", text: "Hi! Here's your test history:" },
                 ...historyMessages
             ]);
         } catch (err) {
@@ -66,7 +66,7 @@ export default function Chat() {
                 { from: "ai", text: res.summary || res.analysisText }
             ]);
         } catch {
-            setMessages(m => [...m, { from: "ai", text: "Ошибка при анализе" }]);
+            setMessages(m => [...m, { from: "ai", text: "Error during analysis" }]);
         } finally {
             setIsTyping(false);
         }
@@ -88,7 +88,7 @@ export default function Chat() {
         <div className="chat-root">
             <div className="app">
                 <header className="topbar">
-                    <div className="username">{username}</div>
+                    <div className="username">{userName}</div>
                     <button className="logout" onClick={handleLogout}>Logout</button>
                 </header>
 
@@ -109,7 +109,7 @@ export default function Chat() {
                 <footer className="inputBar">
                     <textarea
                         className="chat-input"
-                        placeholder="Введите смарт‑контракт или вопрос..."
+                        placeholder="Enter a smart contract or question..."
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={onKeyDown}

@@ -110,6 +110,29 @@
     font-weight: 800;
     cursor: pointer;
 }
+.markdown h1,
+.markdown h2,
+.markdown h3 {
+    margin: 8px 0;
+    font-weight: bold;
+}
+
+.markdown ul {
+    padding-left: 20px;
+}
+
+.markdown code {
+    background: rgba(255,255,255,0.1);
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+
+.markdown pre {
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 6px;
+    overflow-x: auto;
+}
 
 /* адаптация под широкие экраны */
 @media (min-width: 1500px) {

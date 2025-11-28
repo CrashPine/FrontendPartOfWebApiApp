@@ -6,7 +6,7 @@ import "./../styles/auth.css";
 export default function Register() {
     const navigate = useNavigate();
 
-    const [username, setUsername] = useState("");
+    const [userName, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
@@ -17,14 +17,14 @@ export default function Register() {
 
         try {
             await register({
-                username,
+                userName,
                 email,
                 password
             });
 
             navigate("/");
         } catch (err) {
-            setError(err.message || "Ошибка регистрации");
+            setError(err.message || "Registration error");
         }
     };
 
@@ -32,14 +32,14 @@ export default function Register() {
     return (
         <div className="auth-wrapper">
             <form className="auth-card" onSubmit={handleRegister}>
-                <h2>Регистрация</h2>
+                <h2>Registration</h2>
 
                 {error && <p className="error">{error}</p>}
 
                 <input
                     type="text"
-                    placeholder="Имя пользователя"
-                    value={username}
+                    placeholder="Username"
+                    value={userName}
                     onChange={(e) => setUsername(e.target.value)}
                     required
                 />
@@ -54,16 +54,16 @@ export default function Register() {
 
                 <input
                     type="password"
-                    placeholder="Пароль"
+                    placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
 
-                <button className="auth-btn">Создать аккаунт</button>
+                <button className="auth-btn">Create</button>
 
                 <p className="link">
-                    Уже есть аккаунт? <a href="/login">Вход</a>
+                    Already have an account? <a href="/login">Log In</a>
                 </p>
             </form>
         </div>

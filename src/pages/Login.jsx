@@ -23,7 +23,7 @@ export default function Login() {
 
             navigate("/chat");
         } catch (err) {
-            setError("Неверный email или пароль");
+            setError("Incorrect email or password");
         }
     };
 
@@ -44,18 +44,18 @@ export default function Login() {
 
                 <input
                     type="password"
-                    placeholder="Пароль"
+                    placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
 
                 <button className="auth-btn" type="submit">
-                    Войти
+                    Log In
                 </button>
 
                 <p className="link">
-                    Нет аккаунта? <a href="/register">Регистрация</a>
+                    Don't have an account? <a href="/register">Registration</a>
                 </p>
             </form>
         </div>

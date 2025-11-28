@@ -1,10 +1,13 @@
 import React from "react";
-import "../styles/chat.css";
+import ReactMarkdown from "react-markdown";
 
-export default function MessageBubble({ from = "ai", text }) {
+export default function MessageBubble({ from, text }) {
     return (
-        <div className={`msg ${from === "ai" ? "ai" : "user"}`}>
-            {text}
+        <div className={`msg ${from}`}>
+            <ReactMarkdown>
+                {text}
+            </ReactMarkdown>
         </div>
     );
 }
+
