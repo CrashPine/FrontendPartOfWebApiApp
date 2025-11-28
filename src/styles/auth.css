@@ -1,0 +1,51 @@
+/* auth styles (login/register) */
+.auth-wrapper {
+    height: 100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.6));
+    padding: 40px;
+}
+
+.auth-card {
+    width: 360px;
+    padding: 28px;
+    background: #131218;
+    border: 1px solid rgba(128,0,255,0.25);
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 6px 26px rgba(0,0,0,0.6);
+    animation: fadeIn .45s ease-out;
+}
+
+.auth-card h2 {
+    margin: 0; text-align:center;
+    color: var(--neon-soft);
+}
+
+.auth-card input {
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: #0f0f14;
+    border: 2px solid rgba(128,0,255,0.12);
+    color: var(--text-light);
+    outline: none;
+}
+
+.auth-btn {
+    padding: 12px;
+    background: linear-gradient(135deg, var(--neon-main), var(--neon-soft));
+    border-radius: 10px;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    transition: transform .12s ease;
+}
+
+.auth-btn:hover { transform: translateY(-2px); box-shadow: var(--glow-purple); }
+
+.link { text-align:center; color: #bfb0dff0; font-size: 14px; margin-top:6px; }

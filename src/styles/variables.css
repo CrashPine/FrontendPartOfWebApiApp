@@ -1,0 +1,14 @@
+:root {
+    --bg-dark: #0d0d0f;
+    --text-light: #F8EBFF;
+    --primary: #8000FF;
+    --primary-soft: #D8B1FF;
+    --neon-red: #d00d20;
+    --glow-purple: 0 0 12px #8000FF, 0 0 22px #8000FF80;
+    --glow-red: 0 0 12px #d00d20, 0 0 22px #d00d2060;
+
+    --neon-main: #8000FF;
+    --neon-soft: #D8B1FF;
+    --neon-light: #F8EBFF;
+
+}
