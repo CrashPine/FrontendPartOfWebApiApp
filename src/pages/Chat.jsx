@@ -32,9 +32,21 @@ export default function Chat() {
                 history = []; // новый юзер — ок
             }
 
-            const historyMessages = Array.isArray(history)
-                ? history.map(h => ({ from: "ai", text: h.summary }))
-                : [];
+            const historyMessages = [];
+
+            for (const h of history) {
+                if (h.sourceCode) {
+                    historyMessages.push({
+                        from: "user",
+                        text: h.sourceCode
+                    });
+                }
+
+                historyMessages.push({
+                    from: "ai",
+                    text: h.summary
+                });
+            }
 
             setMessages([
                 {
@@ -44,7 +56,7 @@ export default function Chat() {
                             ? "Hi! I found your smart contract analysis history 📘"
                             : "Hi! Your history is empty yet. Try sending your first contract! 😊",
                 },
-                ...historyMessages,
+                ...historyMessages
             ]);
         } catch (err) {
             console.log(err);
