@@ -105,6 +105,17 @@ export default function Chat() {
         }
     };
 
+    const textareaRef = useRef(null);
+
+    const autoResize = () => {
+        const el = textareaRef.current;
+        if (!el) return;
+
+        el.style.height = "auto";         // сброс
+        el.style.height = Math.min(el.scrollHeight, 200) + "px"; // лимит 200px
+    };
+
+
     return (
         <div className="chat-root">
             <div className="app">
@@ -129,13 +140,18 @@ export default function Chat() {
 
                 <footer className="inputBar">
           <textarea
+              ref={textareaRef}
               className="chat-input"
               placeholder="Enter a smart contract or question..."
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) => {
+                  setInput(e.target.value);
+                  autoResize();
+              }}
               onKeyDown={onKeyDown}
               rows={1}
           />
+
                     <button className="send" onClick={handleSend}>Send</button>
                 </footer>
             </div>
